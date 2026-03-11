@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 final cuber = snapshot.data![index];
                 return ListTile(
-                  title: Text(cuber.name),
+                  title: Text(cuber.id),
                   subtitle: Text('Tiempo: ${cuber.time.toStringAsFixed(2)}'),
                 );
               },

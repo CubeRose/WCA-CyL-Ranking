@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 
 import 'package:wca_cyl_ranking/cuber.dart';
 
@@ -18,10 +19,22 @@ Future<List<Cuber>> getCyLranking(String event, String rankingType) async {
 
   final items = data['items'] as List;
 
+  final Map<String, String> cylFilter = {};
+  final fileContent = await rootBundle.loadString('assets/data/cyl_cubers.txt');
+
+  for (final line in fileContent.split('\n')) {
+    final parts = line.trim().split(':');
+    if (parts.length == 2) {
+      cylFilter[parts[0]] = parts[1];
+    }
+  }
+
   //toma cada persona y guarda los datos que necesita de ellos
   final cubers = items
       .map((item) => Cuber.fromJson(item as Map<String, dynamic>))
+      .where((cuber) => cylFilter.containsKey(cuber.id))
       .toList();
+      
 
   return cubers;
 }
