@@ -31,7 +31,8 @@ Future<List<Cuber>> getCyLranking(String event, String rankingType) async {
 
   //toma cada persona y guarda los datos que necesita de ellos
   final cubers = items
-      .map((item) => Cuber.fromJson(item as Map<String, dynamic>))
+      .map((item) => Cuber.fromJson(item as Map<String, dynamic>, 
+                                  cylFilter[item['personId']]!)) //asumimos que el nombre no es nulo
       .where((cuber) => cylFilter.containsKey(cuber.id))
       .toList();
       
