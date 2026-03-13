@@ -33,13 +33,7 @@ class _HomePageState extends State<HomePage> {
   ///de evento y de tipo de ranking (single/media), así como la lista
   ///ordenada de competidores
   Column cubersBody() {
-    return Column(
-      children: [
-        rankTypeButton(), 
-        eventSelector(),
-        listCubers()
-      ],
-    );
+    return Column(children: [rankTypeButton(), eventSelector(), listCubers()]);
   }
 
   ///Botón de decisión binaria. Permite elegir ranking de tipo
@@ -71,7 +65,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
- /*  Column eventSelector() {
+  /*  Column eventSelector() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -82,7 +76,7 @@ class _HomePageState extends State<HomePage> {
     );
   } */
 
-  Column eventSelector() {
+  Widget eventSelector() {
     // Lista de eventos WCA populares (puedes modificar los códigos y nombres)
     final events = [
       {'code': '333', 'iconPath': '333'},
@@ -104,53 +98,39 @@ class _HomePageState extends State<HomePage> {
       {'code': '555bf', 'iconPath': '555bf'},
     ];
 
-    // Divide en dos filas: 9 y 8 botones
-    final firstRow = events.sublist(0, 6);
-    final secondRow = events.sublist(6, 12);
-    final thirdRow = events.sublist(12);
-
-    Widget buildRow(List<Map<String, String>> rowEvents) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: rowEvents.map((event) {
-            final isSelected = eventType == event['code'];
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: ChoiceChip(
-                label: SvgPicture.asset(
-                  'assets/icons/${event['iconPath']}.svg',
-                  height: 20,
-                  width: 20,
-                ),
-                selected: isSelected,
-                selectedColor: Theme.of(context).colorScheme.primary,
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                labelStyle: TextStyle(
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : Theme.of(context).colorScheme.onPrimaryContainer,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-                onSelected: (_) {
-                  setState(() {
-                    eventType = event['code']!;
-                  });
-                },
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        runSpacing: 10,
+        children: events.map((event) {
+          final isSelected = eventType == event['code'];
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: ChoiceChip(
+              label: SvgPicture.asset(
+                'assets/icons/${event['iconPath']}.svg',
+                height: 25,
+                width: 25,
               ),
-            );
-          }).toList(),
-        ),
-      );
-    }
-
-    return Column(
-      children: [
-        buildRow(firstRow),
-        buildRow(secondRow),
-        buildRow(thirdRow),
-      ],
+              selected: isSelected,
+              selectedColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              labelStyle: TextStyle(
+                color: isSelected
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onPrimaryContainer,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+              onSelected: (_) {
+                setState(() {
+                  eventType = event['code']!;
+                });
+              },
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 
