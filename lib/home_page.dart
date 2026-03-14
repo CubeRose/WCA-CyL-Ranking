@@ -79,23 +79,23 @@ class _HomePageState extends State<HomePage> {
   Widget eventSelector() {
     // Lista de eventos WCA populares (puedes modificar los códigos y nombres)
     final events = [
-      {'code': '333', 'iconPath': '333'},
-      {'code': '222', 'iconPath': '222'},
-      {'code': '444', 'iconPath': '444'},
-      {'code': '555', 'iconPath': '555'},
-      {'code': '666', 'iconPath': '666'},
-      {'code': '777', 'iconPath': '777'},
-      {'code': '333oh', 'iconPath': '333oh'},
-      {'code': '333bf', 'iconPath': '333bf'},
-      {'code': '333fm', 'iconPath': '333fm'},
-      {'code': '333mbf', 'iconPath': '333mbf'},
-      {'code': 'clock', 'iconPath': 'clock'},
-      {'code': 'minx', 'iconPath': 'minx'},
-      {'code': 'pyram', 'iconPath': 'pyram'},
-      {'code': 'skewb', 'iconPath': 'skewb'},
-      {'code': 'sq1', 'iconPath': 'sq1'},
-      {'code': '444bf', 'iconPath': '444bf'},
-      {'code': '555bf', 'iconPath': '555bf'},
+      {'code': '333'},
+      {'code': '222'},
+      {'code': '444'},
+      {'code': '555'},
+      {'code': '666'},
+      {'code': '777'},
+      {'code': '333oh'},
+      {'code': '333bf'},
+      {'code': '333fm'},
+      {'code': '333mbf'},
+      {'code': 'clock'},
+      {'code': 'minx'},
+      {'code': 'pyram'},
+      {'code': 'skewb'},
+      {'code': 'sq1'},
+      {'code': '444bf'},
+      {'code': '555bf'},
     ];
 
     return Padding(
@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: ChoiceChip(
               label: SvgPicture.asset(
-                'assets/icons/${event['iconPath']}.svg',
+                'assets/icons/${event['code']}.svg',
                 height: 25,
                 width: 25,
               ),
