@@ -11,37 +11,45 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String rankingType = 'single'; // 'single' or 'average'
+  String rankingType = 'single';
   String eventType = '333';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FB),
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(
-          'Ranking | Castilla y León',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: const Text(
+          'Ranking Castilla y León',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
+        centerTitle: true,
       ),
-
       body: cubersBody(),
     );
   }
 
-  ///Contenido principal de la aplicación. Involucra los selectores
-  ///de evento y de tipo de ranking (single/media), así como la lista
-  ///ordenada de competidores
   Column cubersBody() {
-    return Column(children: [rankTypeButton(), eventSelector(), listCubers()]);
+    return Column(
+      children: [
+        rankTypeButton(),
+        eventSelector(),
+        const SizedBox(height: 8),
+        listCubers(),
+      ],
+    );
   }
 
-  ///Botón de decisión binaria. Permite elegir ranking de tipo
-  ///single o de tipo media.
   Padding rankTypeButton() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24.0),
-      child: Center(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(30),
+        ),
         child: ToggleButtons(
           isSelected: [rankingType == 'single', rankingType == 'average'],
           onPressed: (index) {
@@ -49,35 +57,20 @@ class _HomePageState extends State<HomePage> {
               rankingType = index == 0 ? 'single' : 'average';
             });
           },
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(30),
+          selectedColor: Colors.white,
+          fillColor: Theme.of(context).colorScheme.primary,
+          constraints: const BoxConstraints(minWidth: 120, minHeight: 40),
           children: const [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Text('Single'),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Text('Media'),
-            ),
+            Text('Single'),
+            Text('Average'),
           ],
         ),
       ),
     );
   }
 
-  /*  Column eventSelector() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Container(height:30, width: 200, color: Theme.of(context).colorScheme.primaryContainer,),
-        Container(height:30, width: 200, color: Theme.of(context).colorScheme.primaryContainer,),
-        Container(height:30, width: 200, color: Theme.of(context).colorScheme.primaryContainer,),
-      ],
-    );
-  } */
-
   Widget eventSelector() {
-    // Lista de eventos WCA populares (puedes modificar los códigos y nombres)
     final events = [
       {'code': '333'},
       {'code': '222'},
@@ -99,43 +92,40 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Wrap(
         alignment: WrapAlignment.center,
-        runSpacing: 10,
+        spacing: 8,
+        runSpacing: 8,
         children: events.map((event) {
           final isSelected = eventType == event['code'];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: ChoiceChip(
-              label: SvgPicture.asset(
-                'assets/icons/${event['code']}.svg',
-                height: 25,
-                width: 25,
+          return ChoiceChip(
+            label: SvgPicture.asset(
+              'assets/icons/${event['code']}.svg',
+              height: 22,
+              width: 22,
+              colorFilter: ColorFilter.mode(
+                isSelected ? Colors.white : Colors.black87,
+                BlendMode.srcIn,
               ),
-              selected: isSelected,
-              selectedColor: Theme.of(context).colorScheme.primary,
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              labelStyle: TextStyle(
-                color: isSelected
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.onPrimaryContainer,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-              onSelected: (_) {
-                setState(() {
-                  eventType = event['code']!;
-                });
-              },
             ),
+            selected: isSelected,
+            selectedColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            onSelected: (_) {
+              setState(() {
+                eventType = event['code']!;
+              });
+            },
           );
         }).toList(),
       ),
     );
   }
 
-  ///Contiene la lista scrolleable de competidores ordenados,
-  ///representados como contenedores con posición, nombre, ID y tiempo.
   Expanded listCubers() {
     return Expanded(
       child: FutureBuilder<List<Cuber>>(
@@ -144,23 +134,116 @@ class _HomePageState extends State<HomePage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final cuber = snapshot.data![index];
-                return ListTile(
-                  title: Text("${cuber.id} | ${cuber.name}"),
-                  subtitle: Text('Tiempo: ${cuber.time.toStringAsFixed(2)}'),
+
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primaryContainer, // fondo morado
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 12),
+                      child: Row(
+                        children: [
+                          // POSICIÓN EN CAJA
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '${index + 1}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: getRankColor(index),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          // NOMBRE + ID
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  cuber.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  cuber.id,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[700],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // TIEMPO
+                          Text(
+                            '${cuber.time.toStringAsFixed(2)}s',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 );
               },
             );
           } else {
-            return const Text('No data');
+            return const Center(child: Text('No data'));
           }
         },
       ),
     );
+  }
+
+  Color getRankColor(int index) {
+    switch (index) {
+      case 0:
+        return const Color(0xFFFFB800);
+      case 1:
+        return const Color(0xFF9E9E9E);
+      case 2:
+        return const Color(0xFFB87333);
+      default:
+        return Colors.black87;
+    }
   }
 }
