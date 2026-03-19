@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
         spacing: 8,
         runSpacing: 8,
         children: events.map((event) {
-          final isSelected = eventType == event['code'];
+          final isSelected = (eventType == event['code']);
           return ChoiceChip(
             label: SvgPicture.asset(
               'assets/icons/${event['code']}.svg',
@@ -147,9 +147,7 @@ class _HomePageState extends State<HomePage> {
                       const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primaryContainer, // fondo morado
+                      color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
