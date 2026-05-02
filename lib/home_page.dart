@@ -13,6 +13,21 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String rankingType = 'single';
   String eventType = '333';
+  late Future<List<Cuber>> _initialFetch;
+  List<Cuber> _allCubers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _initialFetch = getAllCubers();
+    _initialFetch
+        .then((list) {
+          setState(() {
+            _allCubers = list;
+          });
+        })
+        .catchError((_) {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +76,7 @@ class _HomePageState extends State<HomePage> {
           selectedColor: Colors.white,
           fillColor: Theme.of(context).colorScheme.primary,
           constraints: const BoxConstraints(minWidth: 120, minHeight: 40),
-          children: const [
-            Text('Single'),
-            Text('Average'),
-          ],
+          children: const [Text('Single'), Text('Average')],
         ),
       ),
     );
@@ -129,104 +141,144 @@ class _HomePageState extends State<HomePage> {
   Expanded listCubers() {
     return Expanded(
       child: FutureBuilder<List<Cuber>>(
-        future: getCyLranking(eventType, rankingType),
+        future: _initialFetch,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              _allCubers.isEmpty) {
             return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+          } else if (snapshot.hasError && _allCubers.isEmpty) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final cuber = snapshot.data![index];
+          }
 
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+          final source = _allCubers.isNotEmpty
+              ? _allCubers
+              : (snapshot.data ?? []);
+
+          final displayList = source.where((cuber) {
+            final int? val = rankingType == 'average'
+                ? cuber.averages[eventType]
+                : cuber.singles[eventType];
+            return val != null && val > 0;
+          }).toList();
+
+          if (displayList.isEmpty) {
+            return const Center(child: Text('No data'));
+          }
+
+          displayList.sort((a, b) {
+            final int va = (rankingType == 'average'
+                ? a.averages[eventType]
+                : a.singles[eventType])!;
+            final int vb = (rankingType == 'average'
+                ? b.averages[eventType]
+                : b.singles[eventType])!;
+            return va.compareTo(vb);
+          });
+
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: displayList.length,
+            itemBuilder: (context, index) {
+              final cuber = displayList[index];
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6,
+                  horizontal: 16,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 12),
-                      child: Row(
-                        children: [
-                          // POSICIÓN EN CAJA
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${index + 1}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: getRankColor(index),
-                                ),
+                    child: Row(
+                      children: [
+                        // POSICIÓN EN CAJA
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${index + 1}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: getRankColor(index),
                               ),
                             ),
                           ),
+                        ),
 
-                          const SizedBox(width: 12),
+                        const SizedBox(width: 12),
 
-                          // NOMBRE + ID
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  cuber.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                        // NOMBRE + ID
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                cuber.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
                                 ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  cuber.id,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[700],
-                                  ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                cuber.id,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[700],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
+                        ),
 
-                          // TIEMPO
-                          Text(
-                            '${cuber.time.toStringAsFixed(2)}s',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
+                        // TIEMPO
+                        Builder(
+                          builder: (_) {
+                            final int raw = (rankingType == 'average'
+                                ? cuber.averages[eventType]
+                                : cuber.singles[eventType])!;
+
+                            final String display = (raw > 0)
+                                ? '${(raw / 100.0).toStringAsFixed(2)}s'
+                                : '-';
+
+                            return Text(
+                              display,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
-            );
-          } else {
-            return const Center(child: Text('No data'));
-          }
+                ),
+              );
+            },
+          );
         },
       ),
     );
