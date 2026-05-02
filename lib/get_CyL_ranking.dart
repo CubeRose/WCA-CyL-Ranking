@@ -5,20 +5,30 @@ import 'package:flutter/services.dart';
 import 'package:wca_cyl_ranking/cuber.dart';
 
 Future<List<Cuber>> getCyLranking(String event, String rankingType) async {
-  final url = Uri.parse(
-    'https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/rank/ES/$rankingType/$event.json',
-  );
+  final all = await getAllCubers();
 
-  final response = await http.get(url);
+  final List<Cuber> filtered = all.where((c) {
+    final int? val = rankingType == 'average'
+        ? c.averages[event]
+        : c.singles[event];
+    return val != null && val > 0;
+  }).toList();
 
-  if (response.statusCode != 200) {
-    throw Exception("No se pudieron cargar los datos");
-  }
+  filtered.sort((a, b) {
+    final int va = (rankingType == 'average'
+        ? a.averages[event]
+        : a.singles[event])!;
+    final int vb = (rankingType == 'average'
+        ? b.averages[event]
+        : b.singles[event])!;
+    return va.compareTo(vb);
+  });
 
-  final data = jsonDecode(response.body) as Map<String, dynamic>;
+  return filtered;
+}
 
-  final items = data['items'] as List;
-
+Future<List<Cuber>> getAllCubers() async {
+  // ID y nombre de competidores de CyL
   final Map<String, String> cylFilter = {};
   final fileContent = await rootBundle.loadString('assets/data/cyl_cubers.txt');
 
@@ -29,15 +39,29 @@ Future<List<Cuber>> getCyLranking(String event, String rankingType) async {
     }
   }
 
-  //toma cada persona y guarda los datos que necesita de ellos
-  final cubers = items
-      .where((item) => cylFilter.containsKey(item['personId']))
-      .map((item) => Cuber.fromJson(
-            item as Map<String, dynamic>,
-            cylFilter[item['personId']]!,
-          ))
-      .toList();
+  // Creamos lista y rellenamos
+  final List<Cuber> cubers = [];
+  // Iteramos por cada id y construimos Cuber usando el campo `rank`
+  for (final id in cylFilter.keys) {
+    final personUrl = Uri.parse(
+      'https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads/v1/persons/$id.json',
+    );
+
+    try {
+      final resp = await http.get(personUrl);
+      if (resp.statusCode != 200) {
+        continue;
+      }
+
+      final Map<String, dynamic> person =
+          jsonDecode(resp.body) as Map<String, dynamic>;
+
+      final cuber = Cuber.fromJson(person, cylFilter[id]!);
+      cubers.add(cuber);
+    } catch (e) {
+      continue;
+    }
+  }
 
   return cubers;
 }
-    
