@@ -11,15 +11,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // se abre por defecto en 3x3x3 single
   String rankingType = 'single';
   String eventType = '333';
+  // obtiene al principio los tiempos y medias de todos
   late Future<List<Cuber>> _initialFetch;
   List<Cuber> _allCubers = [];
-
   @override
   void initState() {
     super.initState();
-    _initialFetch = getAllCubers();
+    _initialFetch = getAllCubers(); // request de lista de Cubers
     _initialFetch
         .then((list) {
           setState(() {
@@ -46,6 +47,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Crea el cuerpo de la aplicacion, constando del selector "single|average", selector de evento
+  /// y la lista ordenada de competidores
   Column cubersBody() {
     return Column(
       children: [
@@ -57,6 +60,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Selector del tipo de ranking sobre tiempos de competicion, con opciones:
+  /// - Single: mejor tiempo único
+  /// - Average: mejor media de 5 tiempos, exluyendo el mejor y el peor de los 5
   Padding rankTypeButton() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -82,6 +88,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Selector de evento, permitiendo elegir entre los eventos oficiales reconocidos por la WCA
   Widget eventSelector() {
     final events = [
       {'code': '333'},
@@ -138,6 +145,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Lista de competidores ordenada de mas rapido a mas lento. Se muestran solo aquellos competidores
+  /// con tiempos oficiales grabados en la categoria elegida, con su nombre, ID y tiempo.
   Expanded listCubers() {
     return Expanded(
       child: FutureBuilder<List<Cuber>>(
@@ -284,6 +293,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Devuelve el color para la numeración de la lista de competidores, tal que:
+  /// - Primer puesto: color oro
+  /// - Segundo puesto: color plata
+  /// - Tercer puesto: color bronce
+  /// - Siguientes: negro
   Color getRankColor(int index) {
     switch (index) {
       case 0:
