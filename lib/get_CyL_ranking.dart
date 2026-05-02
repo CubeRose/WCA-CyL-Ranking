@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter/services.dart';
 
 import 'package:wca_cyl_ranking/cuber.dart';
 
+/// Devuelve una lista ordenada de objetos Cuber, creada a partir de la informacion de la
+/// Unofficial WCA Public API, tomando solo aquellos competidores que sean de CyL.
 Future<List<Cuber>> getCyLranking(String event, String rankingType) async {
   final all = await getAllCubers();
 
@@ -30,7 +31,16 @@ Future<List<Cuber>> getCyLranking(String event, String rankingType) async {
 Future<List<Cuber>> getAllCubers() async {
   // ID y nombre de competidores de CyL
   final Map<String, String> cylFilter = {};
-  final fileContent = await rootBundle.loadString('assets/data/cyl_cubers.txt');
+  final fileUrl = Uri.parse(
+    'https://raw.githubusercontent.com/CubeRose/WCA-CyL-Ranking/main/assets/data/cyl_cubers.txt',
+  );
+
+  final resp = await http.get(fileUrl);
+  if (resp.statusCode != 200) {
+    throw Exception('Failed to fetch cyl_cubers.txt from GitHub');
+  }
+
+  final fileContent = resp.body;
 
   for (final line in fileContent.split('\n')) {
     final parts = line.trim().split(':');
