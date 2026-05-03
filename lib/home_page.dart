@@ -114,15 +114,14 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Wrap(
         alignment: WrapAlignment.center,
-        spacing: 8,
-        runSpacing: 8,
+        spacing: 6,
+        runSpacing: 4,
         children: events.map((event) {
           final isSelected = (eventType == event['code']);
           return ChoiceChip(
             label: SvgPicture.asset(
               'assets/icons/${event['code']}.svg',
-              height: 22,
-              width: 22,
+              height: 16,
               colorFilter: ColorFilter.mode(
                 isSelected ? Colors.white : Colors.black87,
                 BlendMode.srcIn,
