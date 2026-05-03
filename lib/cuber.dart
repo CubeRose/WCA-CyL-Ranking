@@ -12,6 +12,7 @@ class Cuber {
   }) : singles = singles ?? {},
        averages = averages ?? {};
 
+  /// Crea un objeto tipo Cuber a partir del json recibido de Unofficial WCA Public API
   factory Cuber.fromJson(Map<String, dynamic> personJson, String name) {
     final id = personJson['id'] ?? personJson['personId'] ?? '';
 
