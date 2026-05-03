@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
-                                color: getRankColor(index),
+                                color: _getRankColor(index),
                               ),
                             ),
                           ),
@@ -268,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                                 : cuber.singles[eventType])!;
 
                             final String display = (raw > 0)
-                                ? '${(raw / 100.0).toStringAsFixed(2)}s'
+                                ? _formatSeconds(raw)
                                 : '-';
 
                             return Text(
@@ -292,12 +292,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  String _formatSeconds(int time) {
+    // Convertir centisegundos a segundos
+    double totalSeconds = time / 100;
+
+    // Si es menos de 60 segundos, mostrar solo los segundos
+    if (totalSeconds < 60) {
+      return totalSeconds.toStringAsFixed(2);
+    }
+
+    // Calcular minutos y segundos restantes
+    int minutes = (totalSeconds ~/ 60).toInt();
+    double remainingSeconds = totalSeconds % 60;
+
+    // Formatear como M:SS.CC, asegurando que los segundos tengan al menos 2 dígitos antes del punto decimal
+    String formatted = remainingSeconds.toStringAsFixed(2).padLeft(5, '0');
+    return "$minutes:$formatted";
+  }
+
   /// Devuelve el color para la numeración de la lista de competidores, tal que:
   /// - Primer puesto: color oro
   /// - Segundo puesto: color plata
   /// - Tercer puesto: color bronce
   /// - Siguientes: negro
-  Color getRankColor(int index) {
+  Color _getRankColor(int index) {
     switch (index) {
       case 0:
         return const Color(0xFFFFB800);
