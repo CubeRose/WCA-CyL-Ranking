@@ -32,18 +32,20 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FB),
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: const Text(
-          'Ranking Castilla y León',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF5F7FB),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          title: const Text(
+            'Ranking Castilla y León',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
+        body: cubersBody(),
       ),
-      body: cubersBody(),
     );
   }
 
