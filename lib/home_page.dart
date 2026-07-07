@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wca_cyl_ranking/cuber.dart';
 import 'package:wca_cyl_ranking/get_CyL_ranking.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,16 +36,93 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F7FB),
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          title: const Text(
-            'Ranking Castilla y León',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          centerTitle: true,
-        ),
+        appBar: cubersAppBar(context),
         body: cubersBody(),
+      ),
+    );
+  }
+
+  /// Muestra la appBar de la aplicación, conteniendo el título
+  /// y un botón de información de la app
+  AppBar cubersAppBar(BuildContext context) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      title: const Text(
+        'Ranking Castilla y León',
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+      centerTitle: true,
+      actions: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.info),
+          color: Colors.white,
+          tooltip: 'App information',
+          onPressed: () => showInfoDialog(context),
+        ),
+      ],
+    );
+  }
+
+  /// Dialogo mostrado al picar en el botón "i" de la appBar
+  Future<String?> showInfoDialog(BuildContext context) {
+    const String appVersion = '1.0.0+1';
+    final Uri githubUrl = Uri.parse(
+      'https://github.com/CubeRose/WCA-CyL-Ranking',
+    );
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 50,
+              height: 50,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset('assets/icon/icon.png'),
+              ),
+            ),
+            SizedBox(width: 15),
+            const Text('Sobre la app'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'WCA-CyL-Ranking muestra un ranking no oficial de los speedcubers de Castilla y León.\n\nDatos obtenidos de la Unofficial WCA API',
+            ),
+            const SizedBox(height: 16),
+
+            const Text(
+              'Versión',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            Text(appVersion),
+            const SizedBox(height: 8),
+
+            TextButton(
+              onPressed: () =>
+                  launchUrl(githubUrl, mode: LaunchMode.externalApplication),
+              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+              child: const Text('GitHub del proyecto'),
+            ),
+            const SizedBox(height: 8),
+
+            const Text('Autor', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text('Héctor Voces Prieto | CubeRose'),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'OK'),
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
@@ -190,6 +268,7 @@ class _HomePageState extends State<HomePage> {
             itemCount: displayList.length,
             itemBuilder: (context, index) {
               final cuber = displayList[index];
+              final rankColor = _getRankColor(index);
 
               return Padding(
                 padding: const EdgeInsets.symmetric(
@@ -223,15 +302,34 @@ class _HomePageState extends State<HomePage> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Center(
-                            child: Text(
-                              '${index + 1}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: _getRankColor(index),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              if (index < 3)
+                                Container(
+                                  width: 19,
+                                  height: 19,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: rankColor.withOpacity(0.12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: rankColor.withOpacity(0.35),
+                                        blurRadius: 8,
+                                        spreadRadius: 1,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              Text(
+                                '${index + 1}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: rankColor,
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
 
