@@ -296,6 +296,7 @@ class _HomePageState extends State<HomePage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               child: useCompactLayout
+                  // en caso de que el nombre del competidor desborde
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -393,6 +394,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     )
+                  // si no desborda el nombre del competidor
                   : Row(
                       children: [
                         // POSICIÓN EN CAJA
