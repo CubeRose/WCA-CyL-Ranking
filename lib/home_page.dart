@@ -263,239 +263,230 @@ class _HomePageState extends State<HomePage> {
             return va.compareTo(vb);
           });
 
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: displayList.length,
-            itemBuilder: (context, index) {
-              final cuber = displayList[index];
-              final rankColor = _getRankColor(index);
-              final bool useCompactLayout =
-                  MediaQuery.textScaleFactorOf(context) >= 1.2;
+          return buildListChips(displayList);
+        },
+      ),
+    );
+  }
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 6,
-                  horizontal: 16,
+  ListView buildListChips(List<Cuber> displayList) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: displayList.length,
+      itemBuilder: (context, index) {
+        final cuber = displayList[index];
+        final rankColor = _getRankColor(index);
+        final bool useCompactLayout =
+            MediaQuery.textScaleFactorOf(context) >= 1.2;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    child: useCompactLayout
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              child: useCompactLayout
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            // POSICIÓN EN CAJA
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Stack(
+                                alignment: Alignment.center,
                                 children: [
-                                  // POSICIÓN EN CAJA
-                                  Container(
-                                    width: 44,
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
+                                  if (index < 3)
+                                    Container(
+                                      width: 19,
+                                      height: 19,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: rankColor.withOpacity(0.06),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: rankColor.withOpacity(0.35),
+                                            blurRadius: 8,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    child: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        if (index < 3)
-                                          Container(
-                                            width: 19,
-                                            height: 19,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: rankColor.withOpacity(
-                                                0.06,
-                                              ),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: rankColor.withOpacity(
-                                                    0.35,
-                                                  ),
-                                                  blurRadius: 8,
-                                                  spreadRadius: 1,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        Text(
-                                          '${index + 1}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                            color: rankColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  const SizedBox(width: 12),
-
-                                  // NOMBRE + ID
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          cuber.name,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 15,
-                                          ),
-                                          softWrap: true,
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          cuber.id,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey[700],
-                                          ),
-                                        ),
-                                      ],
+                                  Text(
+                                    '${index + 1}',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: rankColor,
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: Builder(
-                                  builder: (_) {
-                                    final int raw = (rankingType == 'average'
-                                        ? cuber.averages[eventType]
-                                        : cuber.singles[eventType])!;
+                            ),
 
-                                    final String display = (raw > 0)
-                                        ? _formatSeconds(raw)
-                                        : '-';
+                            const SizedBox(width: 12),
 
-                                    return Text(
-                                      display,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          )
-                        : Row(
-                            children: [
-                              // POSICIÓN EN CAJA
-                              Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    if (index < 3)
-                                      Container(
-                                        width: 19,
-                                        height: 19,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: rankColor.withOpacity(0.06),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: rankColor.withOpacity(
-                                                0.35,
-                                              ),
-                                              blurRadius: 8,
-                                              spreadRadius: 1,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    Text(
-                                      '${index + 1}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: rankColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              const SizedBox(width: 12),
-
-                              // NOMBRE + ID
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      cuber.name,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15,
-                                      ),
-                                      softWrap: true,
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      cuber.id,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[700],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              // TIEMPO
-                              Builder(
-                                builder: (_) {
-                                  final int raw = (rankingType == 'average'
-                                      ? cuber.averages[eventType]
-                                      : cuber.singles[eventType])!;
-
-                                  final String display = (raw > 0)
-                                      ? _formatSeconds(raw)
-                                      : '-';
-
-                                  return Text(
-                                    display,
+                            // NOMBRE + ID
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    cuber.name,
                                     style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
                                     ),
-                                  );
-                                },
+                                    softWrap: true,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    cuber.id,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Builder(
+                            builder: (_) {
+                              final int raw = (rankingType == 'average'
+                                  ? cuber.averages[eventType]
+                                  : cuber.singles[eventType])!;
+
+                              final String display = (raw > 0)
+                                  ? _formatSeconds(raw)
+                                  : '-';
+
+                              return Text(
+                                display,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        // POSICIÓN EN CAJA
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              if (index < 3)
+                                Container(
+                                  width: 19,
+                                  height: 19,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: rankColor.withOpacity(0.06),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: rankColor.withOpacity(0.35),
+                                        blurRadius: 8,
+                                        spreadRadius: 1,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              Text(
+                                '${index + 1}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: rankColor,
+                                ),
                               ),
                             ],
                           ),
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        // NOMBRE + ID
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                cuber.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                                softWrap: true,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                cuber.id,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // TIEMPO
+                        Builder(
+                          builder: (_) {
+                            final int raw = (rankingType == 'average'
+                                ? cuber.averages[eventType]
+                                : cuber.singles[eventType])!;
+
+                            final String display = (raw > 0)
+                                ? _formatSeconds(raw)
+                                : '-';
+
+                            return Text(
+                              display,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        );
+      },
     );
   }
 
