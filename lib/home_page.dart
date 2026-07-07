@@ -85,37 +85,49 @@ class _HomePageState extends State<HomePage> {
                 child: Image.asset('assets/icon/icon.png'),
               ),
             ),
-            SizedBox(width: 15),
-            const Text('Sobre la app'),
+            const SizedBox(width: 15),
+            Flexible(
+              child: Text(
+                'Sobre la app',
+                softWrap: true,
+                textAlign: TextAlign.center,
+              ),
+            ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'WCA-CyL-Ranking muestra un ranking no oficial de los speedcubers de Castilla y León.\n\nDatos obtenidos de la Unofficial WCA API',
-            ),
-            const SizedBox(height: 16),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
 
-            const Text(
-              'Versión',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            Text(appVersion),
-            const SizedBox(height: 8),
+            children: [
+              const Text(
+                'WCA-CyL-Ranking muestra un ranking no oficial de los speedcubers de Castilla y León.\n\nDatos obtenidos de la Unofficial WCA API',
+              ),
+              const SizedBox(height: 16),
 
-            TextButton(
-              onPressed: () =>
-                  launchUrl(githubUrl, mode: LaunchMode.externalApplication),
-              style: TextButton.styleFrom(padding: EdgeInsets.zero),
-              child: const Text('GitHub del proyecto'),
-            ),
-            const SizedBox(height: 8),
+              const Text(
+                'Versión',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              Text(appVersion),
+              const SizedBox(height: 8),
 
-            const Text('Autor', style: TextStyle(fontWeight: FontWeight.w600)),
-            const Text('Héctor Voces Prieto | CubeRose'),
-          ],
+              TextButton(
+                onPressed: () =>
+                    launchUrl(githubUrl, mode: LaunchMode.externalApplication),
+                style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                child: const Text('GitHub del proyecto'),
+              ),
+              const SizedBox(height: 8),
+
+              const Text(
+                'Autor',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const Text('Héctor Voces Prieto | CubeRose'),
+            ],
+          ),
         ),
         actions: <Widget>[
           TextButton(
