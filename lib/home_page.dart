@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
       elevation: 0,
       backgroundColor: Theme.of(context).colorScheme.primary,
       title: const Text(
-        'Ranking Castilla y León',
+        'WCA-CyL-Ranking',
         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
       ),
       centerTitle: true,
@@ -269,6 +269,8 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               final cuber = displayList[index];
               final rankColor = _getRankColor(index);
+              final bool useCompactLayout =
+                  MediaQuery.textScaleFactorOf(context) >= 1.2;
 
               return Padding(
                 padding: const EdgeInsets.symmetric(
@@ -292,96 +294,201 @@ class _HomePageState extends State<HomePage> {
                       horizontal: 14,
                       vertical: 12,
                     ),
-                    child: Row(
-                      children: [
-                        // POSICIÓN EN CAJA
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Stack(
-                            alignment: Alignment.center,
+                    child: useCompactLayout
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              if (index < 3)
-                                Container(
-                                  width: 19,
-                                  height: 19,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: rankColor.withOpacity(0.12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: rankColor.withOpacity(0.35),
-                                        blurRadius: 8,
-                                        spreadRadius: 1,
-                                      ),
-                                    ],
+                              Row(
+                                children: [
+                                  // POSICIÓN EN CAJA
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        if (index < 3)
+                                          Container(
+                                            width: 19,
+                                            height: 19,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: rankColor.withOpacity(
+                                                0.06,
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: rankColor.withOpacity(
+                                                    0.35,
+                                                  ),
+                                                  blurRadius: 8,
+                                                  spreadRadius: 1,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        Text(
+                                          '${index + 1}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: rankColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              Text(
-                                '${index + 1}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: rankColor,
+
+                                  const SizedBox(width: 12),
+
+                                  // NOMBRE + ID
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          cuber.name,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15,
+                                          ),
+                                          softWrap: true,
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          cuber.id,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[700],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Builder(
+                                  builder: (_) {
+                                    final int raw = (rankingType == 'average'
+                                        ? cuber.averages[eventType]
+                                        : cuber.singles[eventType])!;
+
+                                    final String display = (raw > 0)
+                                        ? _formatSeconds(raw)
+                                        : '-';
+
+                                    return Text(
+                                      display,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ],
-                          ),
-                        ),
-
-                        const SizedBox(width: 12),
-
-                        // NOMBRE + ID
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          )
+                        : Row(
                             children: [
-                              Text(
-                                cuber.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
+                              // POSICIÓN EN CAJA
+                              Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                overflow: TextOverflow.ellipsis,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    if (index < 3)
+                                      Container(
+                                        width: 19,
+                                        height: 19,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: rankColor.withOpacity(0.06),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: rankColor.withOpacity(
+                                                0.35,
+                                              ),
+                                              blurRadius: 8,
+                                              spreadRadius: 1,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    Text(
+                                      '${index + 1}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: rankColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                cuber.id,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[700],
+
+                              const SizedBox(width: 12),
+
+                              // NOMBRE + ID
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      cuber.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                      ),
+                                      softWrap: true,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      cuber.id,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[700],
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                              ),
+
+                              // TIEMPO
+                              Builder(
+                                builder: (_) {
+                                  final int raw = (rankingType == 'average'
+                                      ? cuber.averages[eventType]
+                                      : cuber.singles[eventType])!;
+
+                                  final String display = (raw > 0)
+                                      ? _formatSeconds(raw)
+                                      : '-';
+
+                                  return Text(
+                                    display,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           ),
-                        ),
-
-                        // TIEMPO
-                        Builder(
-                          builder: (_) {
-                            final int raw = (rankingType == 'average'
-                                ? cuber.averages[eventType]
-                                : cuber.singles[eventType])!;
-
-                            final String display = (raw > 0)
-                                ? _formatSeconds(raw)
-                                : '-';
-
-                            return Text(
-                              display,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               );
