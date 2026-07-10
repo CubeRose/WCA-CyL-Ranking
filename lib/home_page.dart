@@ -292,7 +292,7 @@ class _HomePageState extends State<HomePage> {
             MediaQuery.textScaleFactorOf(context) >= 1.2;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+          padding: EdgeInsets.symmetric(vertical: 6, horizontal: 16),
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primaryContainer,
