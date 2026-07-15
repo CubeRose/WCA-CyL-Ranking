@@ -163,18 +163,25 @@ class _HomePageState extends State<HomePage> {
           color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(30),
         ),
-        child: ToggleButtons(
-          isSelected: [rankingType == 'single', rankingType == 'average'],
-          onPressed: (index) {
-            setState(() {
-              rankingType = index == 0 ? 'single' : 'average';
-            });
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final bool useVerticalLayout = constraints.maxWidth < 260;
+
+            return ToggleButtons(
+              direction: useVerticalLayout ? Axis.vertical : Axis.horizontal,
+              isSelected: [rankingType == 'single', rankingType == 'average'],
+              onPressed: (index) {
+                setState(() {
+                  rankingType = index == 0 ? 'single' : 'average';
+                });
+              },
+              borderRadius: BorderRadius.circular(30),
+              selectedColor: Colors.white,
+              fillColor: Theme.of(context).colorScheme.primary,
+              constraints: const BoxConstraints(minWidth: 120, minHeight: 40),
+              children: const [Text('Single'), Text('Average')],
+            );
           },
-          borderRadius: BorderRadius.circular(30),
-          selectedColor: Colors.white,
-          fillColor: Theme.of(context).colorScheme.primary,
-          constraints: const BoxConstraints(minWidth: 120, minHeight: 40),
-          children: const [Text('Single'), Text('Average')],
         ),
       ),
     );
