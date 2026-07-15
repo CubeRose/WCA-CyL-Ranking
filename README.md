@@ -1,6 +1,6 @@
 # WCA-CyL-Ranking
 
-<img src="assets/icon/icon_rounded_400.png" style="width:100px; height:100px;">
+<img src="assets/icon/icon_rounded_400.png" style="width:280px;">
 
 Aplicación Flutter para consultar el **ranking de speedcubers de Castilla y León** (España). Todos los datos se obtienen desde la **Unofficial WCA API**.
 
