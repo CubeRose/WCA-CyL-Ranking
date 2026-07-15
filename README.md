@@ -32,9 +32,9 @@ La aplicación no busca, bajo ningún concepto, remplazar los servicios oficiale
 
 </table>
 
-### Cómo instalar en Android
+### Instalación en Android
 
-Si descargas el archivo `.apk`, sigue estos pasos:
+Para descargar el archivo `.apk`, sigue estos pasos:
 
 1. **Descargar el archivo** desde el enlace anterior
 2. **Activar instalación desde fuentes desconocidas**:
