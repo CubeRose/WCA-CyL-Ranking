@@ -8,7 +8,7 @@ Aplicación Flutter para consultar el ranking de speedcubers de Castilla y León
   <tr>
     <td> <b>Android</b> </td>
     <td>
-      <a>
+      <a href="https://github.com/CubeRose/WCA-CyL-Ranking/releases/download/v1.0.0/wca_cyl_ranking_v1.0.0.apk">
         <img width="280" alt="APK download" src="assets/download_icons/download_android_apk.png">
       </a>
     </td>
