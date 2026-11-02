@@ -17,3 +17,4 @@
 2026GARC48:Paula Rodríguez García
 2026FRAN28:Álvaro Franco
 2025ALVA16:Adrián Velasco Álvarez
+2026CARL13:Daniel Gutiérrez Carlón
